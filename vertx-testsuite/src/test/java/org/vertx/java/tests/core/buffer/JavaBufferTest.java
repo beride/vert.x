@@ -89,6 +89,24 @@ public class JavaBufferTest extends TestCase {
   }
 
   @Test
+  public void testAppendBufferWithOffsetAndLen() throws Exception {
+    int bytesLen = 100;
+    byte[] bytes = TestUtils.generateRandomByteArray(bytesLen);
+    Buffer src = new Buffer(bytes);
+    int len = bytesLen - 2;
+
+    Buffer b = new Buffer();
+    b.appendBuffer(src, 1, len);
+    assertEquals(b.length(), len);
+    byte[] copy = new byte[len];
+    System.arraycopy(bytes, 1, copy, 0, len);
+    assertTrue(TestUtils.byteArraysEqual(copy, b.getBytes()));
+
+    b.appendBuffer(src, 1, len);
+    assertEquals(b.length(), 2 * len);
+  }
+
+  @Test
   public void testAppendByte() throws Exception {
     int bytesLen = 100;
     byte[] bytes = TestUtils.generateRandomByteArray(bytesLen);
@@ -602,6 +620,27 @@ public class JavaBufferTest extends TestCase {
     assertTrue(TestUtils.byteArraysEqual(copy, b.getBytes(1, b.length())));
 
     b.setBytes(b.length(), bytes, 1, len);
+    assertEquals(b.length(), 2 * len + 1);
+  }
+
+
+  @Test
+  public void testSetBufferWithOffsetAndLen() throws Exception {
+    int bytesLen = 100;
+    byte[] bytes = TestUtils.generateRandomByteArray(bytesLen);
+    Buffer src = new Buffer(bytes);
+    int len = bytesLen - 2;
+
+    Buffer b = new Buffer();
+    b.setByte(0, (byte) '0');
+    b.setBuffer(1, src, 1, len);
+    assertEquals(b.length(), len + 1);
+    byte[] copy = new byte[len];
+    System.arraycopy(bytes, 1, copy, 0, len);
+
+    assertTrue(TestUtils.byteArraysEqual(copy, b.getBytes(1, b.length())));
+
+    b.setBuffer(b.length(), src, 1, len);
     assertEquals(b.length(), 2 * len + 1);
   }
 
